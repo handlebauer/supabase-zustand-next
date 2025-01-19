@@ -39,3 +39,5 @@ src/lib/supabase/types.ts
 supabase/.temp
 src/lib/utils.ts
 components.json
+.template
+!.template/install.ts
