@@ -37,4 +37,5 @@ next-env.d.ts
 # template
 src/lib/supabase/types.ts
 supabase/.temp
-src/lib/utils
+src/lib/utils.ts
+components.json

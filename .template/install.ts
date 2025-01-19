@@ -104,7 +104,8 @@ try {
                     !line.includes('# template') &&
                     !line.includes('src/lib/supabase/types.ts') &&
                     !line.includes('supabase/.temp') &&
-                    !line.includes('src/lib/utils'),
+                    !line.includes('src/lib/utils.ts') &&
+                    !line.includes('components.json'),
             )
             .join('\n')
         await Bun.write('.gitignore', cleanedGitignore)
