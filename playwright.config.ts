@@ -7,7 +7,7 @@ const baseURL = `http://localhost:${PORT}`
 // Reference: https://playwright.dev/docs/test-configuration
 export default defineConfig({
     timeout: 30 * 1000, // 30 seconds
-    testDir: path.join(__dirname, 'e2e'), // Test directory
+    testDir: path.join(__dirname, 'tests'), // Test directory
     retries: 2, // If a test fails, retry it additional 2 times
     outputDir: 'test-results/', // Artifacts folder where screenshots, videos, and traces are stored.
     webServer: {
@@ -29,6 +29,10 @@ export default defineConfig({
     },
 
     projects: [
+        {
+            name: 'setup',
+            testMatch: /auth\.setup\.ts/,
+        },
         {
             name: 'Desktop Chrome',
             use: {
