@@ -93,6 +93,26 @@ try {
         throw error
     }
 
+    // Remove template section from .gitignore
+    console.log('\n🧹 Cleaning up .gitignore...')
+    try {
+        const gitignore = await Bun.file('.gitignore').text()
+        const cleanedGitignore = gitignore
+            .split('\n')
+            .filter(
+                line =>
+                    !line.includes('# template') &&
+                    !line.includes('src/lib/supabase/types.ts') &&
+                    !line.includes('supabase/.temp') &&
+                    !line.includes('src/lib/utils'),
+            )
+            .join('\n')
+        await Bun.write('.gitignore', cleanedGitignore)
+    } catch (error) {
+        console.error('\n❌ Error cleaning up .gitignore:', error)
+        throw error
+    }
+
     console.log('\n✅ Project setup completed successfully!')
 } catch (error) {
     console.error('\n❌ Final error:', error)
