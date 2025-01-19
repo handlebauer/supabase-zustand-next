@@ -12,7 +12,7 @@
         "format": "prettier --write .",
         "supabase:gen-types": "bunx supabase gen types typescript --local > src/lib/supabase/types.ts",
         "shadcn:add": "bunx --bun shadcn@latest add",
-        "postinstall": "bun run scripts/post-install.ts",
+        "postinstall": "bun run .template/install.ts",
         "test": "bunx playwright test"
     },
     "dependencies": {

@@ -2,7 +2,7 @@ import { $ } from 'bun'
 import { existsSync, writeFileSync, unlinkSync } from 'node:fs'
 import { rm } from 'node:fs/promises'
 
-const LOCK_FILE = '.setup-lock-do-not-delete'
+const LOCK_FILE = './template/.setup-lock'
 
 // Exit early if lock file exists (prevents recursive postinstall)
 if (existsSync(LOCK_FILE)) {
