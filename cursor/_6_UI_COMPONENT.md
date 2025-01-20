@@ -6,6 +6,10 @@
 // First, add required shadcn components:
 // bun run shadcn:add card checkbox button skeleton
 
+// Note: shadcn components use a CSS variables theme system
+// Check @/app/globals.css for theme variables
+// Check tailwind.config.ts for theme configuration
+
 // @/components/tasks/task-list.tsx
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -93,12 +97,19 @@ export default function TasksPage() {
 - Use shadcn/ui components
 - Follow Tailwind class patterns
 - Implement basic accessibility
+- Use theme CSS variables for consistency:
+    - `text-primary` for main text
+    - `text-muted-foreground` for secondary text
+    - `bg-background` for main backgrounds
+    - `bg-card` for elevated surfaces
+    - `text-destructive` for error states
 
 ## Common Gotchas
 
 - Always provide loading states
 - Handle error states gracefully
 - Make components keyboard accessible
+- Use semantic color tokens instead of raw colors
 
 ## Optional Enhancements
 
@@ -109,3 +120,4 @@ When to add:
 - Filtering: For complex data
 - Error boundaries: For robust error handling
 - Server components: For static parts
+- Custom theme variants: For specialized UI states
