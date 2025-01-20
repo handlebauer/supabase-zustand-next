@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { UserNav } from '@/components/dashboard/user-nav'
+import { Brand } from '@/components/ui/brand'
 
 export default async function HomePage() {
     const supabase = await createClient()
@@ -11,7 +12,7 @@ export default async function HomePage() {
     return (
         <main className="flex min-h-screen flex-col p-6">
             <nav className="flex justify-between items-center w-full">
-                <h1 className="text-2xl font-bold">My App</h1>
+                <Brand>My App</Brand>
                 <div>
                     {user ? (
                         <UserNav user={user} />

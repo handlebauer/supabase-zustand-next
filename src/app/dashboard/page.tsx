@@ -16,7 +16,7 @@ export default async function DashboardPage() {
     return (
         <main className="flex min-h-screen flex-col p-6">
             <nav className="flex justify-between items-center w-full">
-                <Brand>Dashboard</Brand>
+                <Brand href="/dashboard">My App</Brand>
                 <UserNav user={user} />
             </nav>
             <div className="flex-1 flex flex-col items-center justify-center space-y-6">

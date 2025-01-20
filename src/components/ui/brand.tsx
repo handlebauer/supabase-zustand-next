@@ -1,9 +1,14 @@
 import Link from 'next/link'
 
-export function Brand({ children }: { children: React.ReactNode }) {
+interface BrandProps {
+    children: React.ReactNode
+    href?: string
+}
+
+export function Brand({ children, href = '/' }: BrandProps) {
     return (
         <Link
-            href="/dashboard"
+            href={href}
             className="text-2xl font-bold hover:opacity-80 transition-opacity"
         >
             {children}

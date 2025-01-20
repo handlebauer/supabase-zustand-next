@@ -39,12 +39,12 @@ export function DemoButton({ onStateChange }: DemoButtonProps) {
             {/* DEMO USER BUTTON - Remove this component in production */}
             <Button
                 variant="outline"
-                className="w-full bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-950 dark:hover:bg-yellow-900"
+                className="w-full bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 dark:hover:bg-emerald-900 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 dark:hover:text-emerald-200 font-medium"
                 onClick={handleDemoSignIn}
                 disabled={demoLoading}
             >
                 <IconUserCircle className="mr-2 h-4 w-4" />
-                {demoLoading ? '...' : 'Sign in as Demo User'}
+                {demoLoading ? '...' : 'Try Demo Account'}
             </Button>
         </div>
     )
