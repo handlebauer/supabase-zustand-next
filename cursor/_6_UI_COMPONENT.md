@@ -125,25 +125,26 @@ export function EntityComplexComponent({
 }
 ```
 
-## Validation Criteria
-
-- [ ] Component handles all state cases (loading/error/empty/data)
-- [ ] Event handlers properly typed and tested
-- [ ] Props interface well-defined and documented
-- [ ] Performance optimized (useMemo/useCallback where needed)
-- [ ] Consistent with design system patterns
-- [ ] Tests cover all major use cases
-- [ ] Error boundaries in place
-
 ## Common Pitfalls
 
-- Over-fetching state from store
-- Missing loading/error/empty states
-- Accessibility oversights (missing ARIA, keyboard nav)
-- Unnecessary re-renders
-- Prop drilling instead of using context/hooks
-- Complex logic in render method
+- Not handling all loading states
 - Missing error boundaries
-- Inconsistent styling patterns
-- Not handling edge cases
-- Missing type safety
+- Insufficient prop validation
+- Poor accessibility
+- Missing keyboard navigation
+- Inconsistent styling
+- Not following design system
+- Missing responsive design
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+
+## Validation Criteria
+
+- [ ] Component follows design system
+- [ ] All props properly typed
+- [ ] Loading states handled
+- [ ] Error states managed
+- [ ] Accessibility implemented
+- [ ] Responsive design works
+- [ ] Tests cover interactions
+- [ ] Stories document usage

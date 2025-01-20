@@ -109,19 +109,6 @@ import { entitySchema, entityInsertSchema } from '@/lib/validations/entity'
 // - Access control based on user permissions
 ```
 
-## Validation Checklist
-
-- [ ] Migration creates all tables/relationships
-- [ ] RLS policies match access requirements
-- [ ] `bun run supabase:gen-types` runs successfully
-- [ ] Types are complete and exported
-- [ ] Zod schemas match Supabase types (use `satisfies`)
-- [ ] Runtime validations added where needed
-- [ ] Insert/Update variants created
-- [ ] Integration outputs are documented
-
-NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS ABOVE
-
 ## Example Usage
 
 ```typescript
@@ -143,3 +130,16 @@ const featureSpec = {
 - Missing `satisfies` type checks
 - Forgetting to create Insert/Update variants
 - Not handling nullable fields correctly
+
+## Validation Checklist
+
+- [ ] Migration creates all tables/relationships
+- [ ] RLS policies match access requirements
+- [ ] `bun run supabase:gen-types` runs successfully
+- [ ] Types are complete and exported
+- [ ] Zod schemas match Supabase types (use `satisfies`)
+- [ ] Runtime validations added where needed
+- [ ] Insert/Update variants created
+- [ ] Integration outputs are documented
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS ABOVE

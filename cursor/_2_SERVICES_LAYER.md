@@ -115,19 +115,6 @@
     // Add seed data here
     ```
 
-## Validation Criteria
-
-- [ ] All CRUD operations implemented with proper types
-- [ ] Zod validation on all database operations
-- [ ] Error handling includes validation errors
-- [ ] Tests cover schema validation cases
-- [ ] RLS policies are respected
-- [ ] Performance is optimized for common queries
-- [ ] Transactions used where necessary
-- [ ] Seed data covers key scenarios
-
-NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS ABOVE
-
 ## Example Usage
 
 ```typescript
@@ -150,3 +137,16 @@ const entities = await entityService.findMany({
 - Missing error logging
 - Not respecting RLS in queries
 - Insufficient validation test coverage
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+
+## Validation Criteria
+
+- [ ] All CRUD operations implemented with proper types
+- [ ] Zod validation on all database operations
+- [ ] Error handling includes validation errors
+- [ ] Tests cover schema validation cases
+- [ ] RLS policies are respected
+- [ ] Performance is optimized for common queries
+- [ ] Transactions used where necessary
+- [ ] Seed data covers key scenarios

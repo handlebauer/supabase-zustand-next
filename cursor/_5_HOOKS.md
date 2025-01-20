@@ -140,17 +140,6 @@ function EntityDashboard() {
 }
 ```
 
-## Validation Criteria
-
-- [ ] Hooks properly memoize expensive computations
-- [ ] Complex state combinations are efficient
-- [ ] Side effects are properly managed
-- [ ] Loading states correctly combined
-- [ ] Error states properly handled
-- [ ] Return values are stable
-- [ ] Tests cover all major use cases
-- [ ] Performance benchmarks pass
-
 ## Common Pitfalls
 
 - Missing dependency arrays in useMemo/useCallback
@@ -161,3 +150,16 @@ function EntityDashboard() {
 - Over-abstraction of simple state
 - Not handling loading/error states
 - Missing type safety
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+
+## Validation Criteria
+
+- [ ] Hooks properly memoize expensive computations
+- [ ] Complex state combinations are efficient
+- [ ] Side effects are properly managed
+- [ ] Loading states correctly combined
+- [ ] Error states properly handled
+- [ ] Return values are stable
+- [ ] Tests cover all major use cases
+- [ ] Performance benchmarks pass

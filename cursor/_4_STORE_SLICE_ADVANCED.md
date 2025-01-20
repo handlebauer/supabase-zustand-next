@@ -164,25 +164,26 @@ export const selectFilteredEntities = createSelector(
 // Add additional selectors for common data transformations
 ```
 
-## Validation Criteria
-
-- [ ] Optimistic updates working with rollback
-- [ ] Batch operations implemented efficiently
-- [ ] Selectors properly memoized
-- [ ] Error recovery functioning
-- [ ] State consistency maintained
-- [ ] Performance optimized
-- [ ] Type safety with Zod validation
-- [ ] Integration with server actions
-- [ ] Proper use of immer for immutable updates
-
 ## Common Pitfalls
 
-- Not storing previous state for rollbacks
-- Missing error handling in batch operations
-- Inefficient selector memoization
-- Race conditions in updates
-- Memory leaks in selectors
-- Not validating inputs with Zod
-- Inconsistent error handling patterns
-- Not using proper types from services layer
+- Complex state derivations
+- Missing type safety
+- Poor error handling
+- Not using middleware
+- Missing persistence
+- Inconsistent naming
+- Poor performance
+- No devtools
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+
+## Validation Criteria
+
+- [ ] State shape optimized
+- [ ] Actions properly typed
+- [ ] Middleware configured
+- [ ] Persistence working
+- [ ] Error handling robust
+- [ ] Types are complete
+- [ ] Tests comprehensive
+- [ ] Performance tested

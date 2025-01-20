@@ -144,23 +144,26 @@ export default async function Page() {
 }
 ```
 
-## Validation Criteria
-
-- [ ] All required actions implemented with proper types
-- [ ] Input validation using Zod schemas
-- [ ] Error handling returns user-friendly messages
-- [ ] Cache invalidation implemented for all mutations
-- [ ] Tests cover happy path and error cases
-- [ ] Service layer properly mocked in tests
-- [ ] All actions are marked with 'use server'
-
 ## Common Pitfalls
 
-- Forgetting 'use server' directive
-- Not handling all error cases
-- Missing cache invalidation
-- Incorrect path revalidation
-- Exposing internal errors to client
-- Insufficient input validation
-- Not mocking services in tests
-- Missing type safety between layers
+- Not handling validation errors properly
+- Missing input validation
+- Insufficient error handling
+- Not using transactions where needed
+- Missing optimistic updates
+- Incorrect error propagation
+- Insufficient logging
+- Missing type safety
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+
+## Validation Criteria
+
+- [ ] Input validation with Zod schemas
+- [ ] Error handling for all cases
+- [ ] Proper transaction management
+- [ ] Optimistic updates implemented
+- [ ] Loading states managed
+- [ ] Type safety throughout
+- [ ] Tests cover error cases
+- [ ] Performance optimized

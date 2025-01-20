@@ -139,25 +139,26 @@ export const useStore = create<EntitySlice>()(
 )
 ```
 
-## Validation Criteria
-
-- [ ] Types properly define state and actions
-- [ ] Necessary CRUD operations implemented
-- [ ] Loading states managed correctly
-- [ ] Error states managed correctly
-- [ ] Store composition updated
-- [ ] Immer middleware configured
-- [ ] Type safety with Zod validation
-- [ ] Integration with server actions
-- [ ] Proper use of generated types
-
 ## Common Pitfalls
 
-- Missing type exports
-- Incomplete error handling
-- Not handling loading states
-- Forgetting to reset error state
-- Missing server action imports
-- Not validating inputs with Zod
-- Inconsistent error handling patterns
-- Not using proper types from services layer
+- Not handling loading/error states
+- Missing type safety
+- Unnecessary state updates
+- Complex state derivations
+- Not using devtools
+- Missing persistence
+- Poor error handling
+- Inconsistent naming
+
+NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+
+## Validation Criteria
+
+- [ ] State shape is well-defined
+- [ ] Actions are properly typed
+- [ ] Loading states managed
+- [ ] Error states handled
+- [ ] Persistence configured
+- [ ] Devtools integration
+- [ ] Tests cover mutations
+- [ ] Performance optimized
