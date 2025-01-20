@@ -1,5 +1,4 @@
 import { chromium, request, type FullConfig } from '@playwright/test'
-import { readFile } from 'fs/promises'
 import { mkdir } from 'fs/promises'
 import { join } from 'path'
 
@@ -64,6 +63,7 @@ async function getLoginUrl(username: string) {
     }
 
     const url = match[1].trim()
+
     console.log('Using URL:', url)
     return url
 }
@@ -84,29 +84,6 @@ export default async function setup(config: FullConfig) {
     const page = await browser.newPage()
 
     try {
-        // First check if we have a valid auth state
-        try {
-            const authState = JSON.parse(
-                await readFile(AUTH_STATE_PATH, 'utf-8'),
-            )
-
-            if (authState?.cookies?.length > 0) {
-                // Load the existing auth state
-                await page.context().addCookies(authState.cookies)
-
-                // Verify the auth state is still valid
-                await page.goto(`${config.webServer?.url}/dashboard`)
-                const currentUrl = page.url()
-                if (!currentUrl.includes('/login')) {
-                    console.log('Using existing auth state')
-                    return
-                }
-            }
-        } catch (_) {
-            console.log('No valid auth state, proceeding with login')
-            // No valid auth state, proceed with login
-        }
-
         // Request magic link
         await page.goto(`${config.webServer?.url}/login`)
         await page.getByPlaceholder('user@example.com').fill(TEST_EMAIL_ADDRESS)
@@ -134,36 +111,20 @@ export default async function setup(config: FullConfig) {
         // Complete authentication
         await page.goto(loginUrl)
 
-        // Wait for the auth callback to complete
-        await page.waitForURL(
-            (url: URL) => {
-                console.log('Current URL:', url.toString())
-                return (
-                    url.pathname.includes('/dashboard') ||
-                    (url.pathname.includes('/login') &&
-                        url.search.includes('error'))
-                )
-            },
-            { timeout: 10000 },
-        )
-
-        // Check if we got an error
-        const currentUrl = page.url()
-        if (currentUrl.includes('error')) {
-            throw new Error(`Authentication failed: ${currentUrl}`)
-        }
+        // Wait for navigation to complete and auth to be set
+        await page.waitForURL('**/dashboard', { timeout: 10000 })
 
         // Save auth state
-        const authState = await page.context().storageState()
-        await Bun.write(AUTH_STATE_PATH, JSON.stringify(authState, null, 2))
+        await page.context().storageState({ path: AUTH_STATE_PATH })
 
-        // Verify the saved state
-        const savedState = await Bun.file(AUTH_STATE_PATH).json()
-        if (!savedState?.cookies?.length) {
+        // Verify auth state was saved
+
+        try {
+            const authState = await Bun.file(AUTH_STATE_PATH).json()
+            console.log('Auth state:', authState)
+        } catch (_error) {
             throw new Error('Failed to save authentication state')
         }
-
-        console.log('Authentication successful')
     } finally {
         await browser.close()
     }
