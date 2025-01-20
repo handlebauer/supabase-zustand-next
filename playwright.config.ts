@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
-import path from 'path'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '.env.local' })
 
 const PORT = process.env.PORT || 3000
 const baseURL = `http://localhost:${PORT}`
@@ -7,16 +9,16 @@ const baseURL = `http://localhost:${PORT}`
 // Reference: https://playwright.dev/docs/test-configuration
 export default defineConfig({
     timeout: 30 * 1000, // 30 seconds
-    testDir: path.join(__dirname, 'tests'), // Test directory
-    retries: 2, // If a test fails, retry it additional 2 times
+    testDir: './tests', // Test directory
+    retries: 1, // If a test fails, retry it additional 1 time
     outputDir: 'test-results/', // Artifacts folder where screenshots, videos, and traces are stored.
     webServer: {
-        command: 'npm run dev',
+        command: 'bun dev',
         url: baseURL,
         timeout: 120 * 1000, // 120 seconds
         reuseExistingServer: !process.env.CI, // Reuse existing server
     },
-
+    globalSetup: './tests/auth.setup.ts',
     use: {
         // Use baseURL so to make navigations relative.
         baseURL,
@@ -30,19 +32,16 @@ export default defineConfig({
 
     projects: [
         {
-            name: 'setup',
-            testMatch: /auth\.setup\.ts/,
-        },
-        {
             name: 'Desktop Chrome',
             use: {
                 ...devices['Desktop Chrome'],
+                storageState: 'tests/.auth/state.json',
             },
         },
-        {
-            name: 'Mobile Safari',
-            use: devices['iPhone 12'],
-        },
+        // {
+        //     name: 'Mobile Safari',
+        //     use: devices['iPhone 12'],
+        // },
         // {
         //   name: 'Desktop Firefox',
         //   use: {
