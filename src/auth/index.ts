@@ -1,4 +1,4 @@
-import { createClient } from './supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 export async function signInWithGitHub() {
     const supabase = createClient()

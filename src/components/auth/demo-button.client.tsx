@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { IconUserCircle } from '@tabler/icons-react'
-import { signInAsDemoUser } from '@/lib/auth'
+import { signInAsDemoUser } from '@/auth'
 import { useRouter } from 'next/navigation'
 
 export interface DemoButtonProps {

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { IconBrandGithub, IconBrandDiscord } from '@tabler/icons-react'
-import { signInWithGitHub, signInWithDiscord } from '@/lib/auth'
+import { signInWithGitHub, signInWithDiscord } from '@/auth'
 import { useState } from 'react'
 
 export interface SocialButtonsProps {
