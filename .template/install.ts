@@ -108,7 +108,8 @@ try {
                     !line.includes('components.json') &&
                     !line.includes('.template') &&
                     !line.includes('!.template/install.ts') &&
-                    !line.includes('tests/.auth/'),
+                    !line.includes('tests/.auth/') &&
+                    !line.includes('supabase/.branches'),
             )
             .join('\n')
         await Bun.write('.gitignore', cleanedGitignore)

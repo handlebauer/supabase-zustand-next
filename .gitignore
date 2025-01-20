@@ -5,6 +5,7 @@
 
 # testing
 /coverage
+/test-results
 
 # next.js
 /.next/
@@ -37,6 +38,7 @@ next-env.d.ts
 # template
 src/lib/supabase/types.ts
 supabase/.temp
+supabase/.branches
 src/lib/utils.ts
 components.json
 .template
