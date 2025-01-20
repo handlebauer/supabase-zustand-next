@@ -11,7 +11,7 @@ import type { Tables } from '@/lib/supabase/types'
 import { z } from 'zod'
 
 export class TaskService {
-    private db = createClient()
+    private db = createClient() // requires `await` before use
 
     // Start with the operations you need most
     async findById(id: string): Promise<Tables<'tasks'>> {
