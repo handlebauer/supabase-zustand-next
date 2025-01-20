@@ -1,6 +1,7 @@
 import { $ } from 'bun'
 import { existsSync, writeFileSync, unlinkSync } from 'node:fs'
 import { rm } from 'node:fs/promises'
+import { createInterface } from 'node:readline/promises'
 
 const LOCK_FILE = '.template/.setup-lock'
 
@@ -34,6 +35,51 @@ process.on('SIGINT', async () => {
     process.exit(1)
 })
 
+async function promptForEnvVars() {
+    const rl = createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    })
+
+    console.log('\n📝 Please provide the following environment variables:')
+    console.log('(Press Enter to skip optional variables)\n')
+
+    const vars: Record<string, string> = {}
+
+    // Optional: OpenAI API Key for Supabase Studio AI features
+    vars.OPENAI_API_KEY = await rl.question('OpenAI API Key (optional): ')
+
+    // GitHub OAuth
+    console.log('\nGitHub OAuth (Required for GitHub authentication):')
+    vars.SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID =
+        await rl.question('GitHub Client ID: ')
+    vars.SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET = await rl.question(
+        'GitHub Client Secret: ',
+    )
+
+    // Discord OAuth
+    console.log('\nDiscord OAuth (Required for Discord authentication):')
+    vars.SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID = await rl.question(
+        'Discord Client ID: ',
+    )
+    vars.SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET = await rl.question(
+        'Discord Client Secret: ',
+    )
+
+    rl.close()
+    return vars
+}
+
+async function writeEnvFile(vars: Record<string, string>) {
+    const envContent = Object.entries(vars)
+        .filter(([_, value]) => value) // Only include non-empty values
+        .map(([key, value]) => `${key}=${value}`)
+        .join('\n')
+
+    await Bun.write('.env.local', envContent)
+    console.log('\n✅ Environment variables written to .env.local')
+}
+
 try {
     // Create lock file to prevent recursive runs
     writeFileSync(LOCK_FILE, 'locked')
@@ -48,6 +94,10 @@ try {
         )
         throw error
     }
+
+    // Collect and write environment variables
+    const envVars = await promptForEnvVars()
+    await writeEnvFile(envVars)
 
     // Check if Supabase is already initialized
     if (!existsSync('./supabase')) {
