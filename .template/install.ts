@@ -174,6 +174,3 @@ try {
     cleanup()
     process.exit(1)
 }
-
-// Clean up lock file on successful completion
-unlinkSync(LOCK_FILE)
