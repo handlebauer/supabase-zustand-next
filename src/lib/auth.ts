@@ -48,6 +48,21 @@ export async function signInWithMagicLink(email: string) {
     return { success: 'Check your email for the magic link' }
 }
 
+export async function signInAsDemoUser() {
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPassword({
+        // These credentials should be set up in your Supabase project
+        email: 'demo@example.com',
+        password: 'demo123456',
+    })
+
+    console.log('[Auth] Signing in as demo user')
+
+    if (error) {
+        throw error
+    }
+}
+
 export async function signOut() {
     const supabase = createClient()
     const { error } = await supabase.auth.signOut()

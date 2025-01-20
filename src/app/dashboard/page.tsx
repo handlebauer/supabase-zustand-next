@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { UserNav } from '@/components/dashboard/user-nav'
+import { Brand } from '@/components/ui/brand'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardPage() {
@@ -15,7 +16,7 @@ export default async function DashboardPage() {
     return (
         <main className="flex min-h-screen flex-col p-6">
             <nav className="flex justify-between items-center w-full">
-                <h1 className="text-2xl font-bold">Dashboard</h1>
+                <Brand>Dashboard</Brand>
                 <UserNav user={user} />
             </nav>
             <div className="flex-1 flex flex-col items-center justify-center space-y-6">
