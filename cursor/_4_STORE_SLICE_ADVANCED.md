@@ -1,189 +1,116 @@
-# Create Advanced Store Slice
+# Advanced Store Patterns
 
-## Required Input
+## Quick Start
 
-- Basic store slice implementation
-- Complex state update requirements
-- Optimistic update needs
-- Batch operation specifications
-- Performance requirements
+```typescript
+// @/store/tasks.ts
+import { create } from 'zustand'
+import { type Tables } from '@/lib/supabase/types'
+import { createTask, updateTask } from '@/lib/actions/tasks'
+import { persist } from 'zustand/middleware'
 
-## Expected Output
-
-1. Enhanced Store Slice
-
-    - Location: `@/store/slices/<slice-name>.ts`
-    - Optimistic updates
-    - Batch operations
-    - Rollback handling
-    - Type-safe state management
-
-2. Selectors
-    - Location: `@/store/selectors/<slice-name>.ts`
-    - Memoized selectors
-    - Complex data transformations
-
-## Dependencies
-
-- Basic store slice must be implemented first (`@/store/slices/<slice-name>.ts` must exist)
-- Reference: See `@/_TEMPLATE_RELATIONSHIPS.md` for implementation flow
-
-## Context Requirements
-
-- Understanding of existing store slice
-- Knowledge of complex state relationships
-- Performance bottlenecks to address
-
-## Implementation Steps
-
-1. Enhance store slice with optimistic updates:
-
-```typescript:@/store/slices/<slice-name>.ts
-import { entitySchema } from '@/lib/schemas/<feature-name>'
-import { updateEntity, batchUpdateEntities } from '@/lib/actions/<feature-name>'
-import { immer } from 'zustand/middleware/immer'
-
-import { type EntityRow } from '@/lib/schemas/<feature-name>'
-import { type StateCreator } from 'zustand'
-
-interface EntitySlice {
-  data: EntityRow[]
-  error: Error | null
-  update: (id: string, input: Omit<EntityRow, 'id' | 'created_at'>) => Promise<void>
-  batchUpdate: (updates: Array<{ id: string; input: Omit<EntityRow, 'id' | 'created_at'> }>) => Promise<void>
+interface TaskState {
+  tasks: Tables<'tasks'>[]
+  isLoading: boolean
+  error: string | null
 }
 
-export const createSlice: StateCreator<EntitySlice> = immer((set, get) => ({
-  data: [],
-  error: null,
+interface TaskActions {
+  // Optimistic update example
+  updateStatus: (id: string, status: 'todo' | 'done') => Promise<void>
+  // Batch operation example
+  completeTasks: (ids: string[]) => Promise<void>
+}
 
-  update: async (id: string, input: Omit<EntityRow, 'id' | 'created_at'>) => {
-    const previousData = get().data;
+export const useTaskStore = create<TaskState & TaskActions>()(
+  persist(
+    (set, get) => ({
+      tasks: [],
+      isLoading: false,
+      error: null,
 
-    // Validate input
-    try {
-      entitySchema.partial().parse(input);
-    } catch (error) {
-      set(state => { state.error = error as Error });
-      return;
-    }
+      updateStatus: async (id, status) => {
+        const previousTasks = get().tasks
 
-    // Optimistic update
-    set(state => {
-      const index = state.data.findIndex(item => item.id === id);
-      if (index !== -1) Object.assign(state.data[index], input);
-    });
+        // Optimistic update
+        set(state => ({
+          tasks: state.tasks.map(task =>
+            task.id === id ? { ...task, status } : task
+          )
+        }))
 
-    try {
-      const { data: updatedData, error } = await updateEntity({ id, ...input });
-      if (error) throw new Error(error);
-
-      set(state => {
-        const index = state.data.findIndex(item => item.id === id);
-        if (index !== -1 && updatedData) state.data[index] = updatedData;
-        state.error = null;
-      });
-    } catch (error) {
-      // Rollback on error
-      set(state => {
-        state.data = previousData;
-        state.error = error as Error;
-      });
-    }
-  },
-
-    batchUpdate: async (updates: Array<{ id: string; input: Omit<EntityRow, 'id' | 'created_at'> }>) => {
-    const previousData = get().data;
-
-    // Validate all inputs
-    try {
-      updates.forEach(({ input }) => {
-        entitySchema.partial().parse(input);
-      });
-    } catch (error) {
-      set(state => { state.error = error as Error });
-      return;
-    }
-
-    // Optimistic updates
-    set(state => {
-      updates.forEach(({ id, input }) => {
-        const index = state.data.findIndex(item => item.id === id);
-        if (index !== -1) Object.assign(state.data[index], input);
-      });
-    });
-
-    try {
-      const { data: results, error } = await batchUpdateEntities(updates);
-      if (error) throw new Error(error);
-
-      set(state => {
-        if (results) {
-          results.forEach(item => {
-            const index = state.data.findIndex(d => d.id === item.id);
-            if (index !== -1) state.data[index] = item;
-          });
+        try {
+          const result = await updateTask({ id, status })
+          if (result.error) throw new Error(result.error)
+        } catch (error) {
+          // Rollback on failure
+          set({ tasks: previousTasks, error: error.message })
         }
-        state.error = null;
-      });
-    } catch (error) {
-      // Rollback on error
-      set(state => {
-        state.data = previousData;
-        state.error = error as Error;
-      });
+      },
+
+      completeTasks: async (ids) => {
+        const previousTasks = get().tasks
+
+        // Optimistic update
+        set(state => ({
+          tasks: state.tasks.map(task =>
+            ids.includes(task.id) ? { ...task, status: 'done' } : task
+          )
+        }))
+
+        try {
+          await Promise.all(
+            ids.map(id => updateTask({ id, status: 'done' }))
+          )
+        } catch (error) {
+          // Rollback on failure
+          set({ tasks: previousTasks, error: error.message })
+        }
+      }
+    }),
+    {
+      name: 'task-storage',
+      partialize: (state) => ({ tasks: state.tasks }) // Only persist tasks
     }
-  }
-}));
-```
+  )
+)
 
-2. Implement memoized selectors:
+// Usage with derived state:
+export function TaskStats() {
+  const tasks = useTaskStore(useShallow(state => state.tasks))
+  const stats = useMemo(() => ({
+    total: tasks.length,
+    completed: tasks.filter(t => t.status === 'done').length
+  }), [tasks])
 
-```typescript:@/store/selectors/<slice-name>.ts
-import { createSelector } from 'reselect';
-import type { EntityRow } from '@/lib/schemas/<feature-name>';
-import type { EntitySlice } from '../slices/<slice-name>';
-
-export interface EntityFilters {
-  // Add filter types based on entity fields
-  status?: string
-  search?: string
+  return (
+    <div>
+      <div>Total: {stats.total}</div>
+      <div>Completed: {stats.completed}</div>
+    </div>
+  )
 }
-
-export const selectFilteredEntities = createSelector(
-  [(state: EntitySlice) => state.data, (_: EntitySlice, filters: EntityFilters) => filters],
-  (data, filters): EntityRow[] => {
-    return data.filter(item => {
-      if (filters.status && item.status !== filters.status) return false;
-      if (filters.search && !item.name.toLowerCase().includes(filters.search.toLowerCase())) return false;
-      return true;
-    });
-  }
-);
-
-// Add additional selectors for common data transformations
 ```
 
-## Common Pitfalls
+## Essential Requirements
 
-- Complex state derivations
-- Missing type safety
-- Poor error handling
-- Not using middleware
-- Missing persistence
-- Inconsistent naming
-- Poor performance
-- No devtools
+- Optimistic updates with rollback
+- Batch operations handling
+- Persistence configuration
+- Derived state with useMemo
 
-NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+## Common Gotchas
 
-## Validation Criteria
+- Always save previous state before optimistic updates
+- Handle all error cases in batch operations
+- Use partialize to control what gets persisted
 
-- [ ] State shape optimized
-- [ ] Actions properly typed
-- [ ] Middleware configured
-- [ ] Persistence working
-- [ ] Error handling robust
-- [ ] Types are complete
-- [ ] Tests comprehensive
-- [ ] Performance tested
+## Optional Enhancements
+
+When to add:
+
+- Middleware: For logging/debugging
+- Selectors: For complex derived state
+- Subscriptions: For side effects
+- DevTools: For development
+- Action queuing: For offline support

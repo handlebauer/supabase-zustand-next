@@ -1,164 +1,109 @@
-# Create Basic Store Slice
+# Basic Store Slice Creation
 
-## Required Input
+## When do I need this?
 
-- Feature name and state shape
-- Server actions to be integrated
-- Basic CRUD operations needed
-- Initial state structure
+You need a store slice when:
 
-## Expected Output
+- Managing client-side state across components
+- Handling optimistic updates
+- Maintaining UI state that persists across renders
 
-1. Types File
+You might skip this layer when:
 
-    - Location: `@/store/<slice-name>/types.ts`
-    - State interface
-    - Actions interface
-    - Data types
+- Working with server-fetched data that doesn't need client caching
+- Building simple forms that submit directly through server actions
+- Creating UI components that only use local state
 
-2. Store Slice
+## Quick Start
 
-    - Location: `@/store/<slice-name>/slice.ts`
-    - Basic CRUD operations
-    - Loading states
-    - Error handling
+```typescript
+// @/store/tasks.ts
+import { create } from 'zustand'
+import { type Tables } from '@/lib/supabase/types'
+import { createTask } from '@/lib/actions/tasks'
 
-3. Store Composition (if needed)
-    - Location: `@/store/index.ts`
-    - Slice integration
-
-## Dependencies
-
-- Server actions from `@/lib/actions/<feature-name>.ts`
-- Zod schemas from `@/lib/schemas/<feature-name>.ts`
-- Service types from `@/services/<feature-name>.ts`
-- Reference: See `@/_TEMPLATE_RELATIONSHIPS.md` for implementation flow
-
-## Context Requirements
-
-- Access to server action types
-- Understanding of feature data shape
-- Knowledge of required operations
-
-## Implementation Steps
-
-1. Create type definitions:
-
-```typescript:@/store/types/<slice-name>.ts
-import { type EntityRow } from '@/lib/schemas/<feature-name>'
-
-export interface EntityState {
-  data: EntityRow[]
+interface TaskState {
+  tasks: Tables<'tasks'>[]
   isLoading: boolean
-  error: Error | null
+  error: string | null
 }
 
-export interface EntityActions {
-  create: (input: Omit<EntityRow, 'id' | 'created_at'>) => Promise<void>
-  // Additional CRUD actions (fetch, update, delete)
-  reset: () => void
+interface TaskActions {
+  create: (formData: FormData) => Promise<void>
+  setError: (error: string | null) => void
 }
 
-export type EntitySlice = EntityState & EntityActions
-```
-
-2. Implement basic slice:
-
-```typescript:@/store/slices/<slice-name>.ts
-import { type StateCreator } from 'zustand'
-import { immer } from 'zustand/middleware/immer'
-import { type EntitySlice } from '../types/<slice-name>'
-import { entitySchema } from '@/lib/schemas/<feature-name>'
-import { createEntity } from '@/lib/actions/<feature-name>'
-
-export const createSlice: StateCreator<EntitySlice> = immer((set, get) => ({
-  data: [],
+// Create store with minimal state and one action
+export const useTaskStore = create<TaskState & TaskActions>((set) => ({
+  // Initial state
+  tasks: [],
   isLoading: false,
   error: null,
 
-  create: async (input) => {
-    set(state => { state.isLoading = true; state.error = null });
+  // Start with most common action
+  create: async (formData) => {
+    set({ isLoading: true, error: null })
 
-    // Validate input
-    try {
-      entitySchema.omit({ id: true, created_at: true }).parse(input);
-    } catch (error) {
-      set(state => {
-        state.error = error as Error;
-        state.isLoading = false;
-      });
-      return;
+    const result = await createTask(formData)
+
+    if (result.error) {
+      set({ error: result.error, isLoading: false })
+      return
     }
 
-    try {
-      const { data: newEntity, error } = await createEntity(input);
-      if (error) {
-        set(state => {
-          state.error = error as Error;
-          state.isLoading = false;
-        });
-        return;
-      }
-
-      set(state => {
-        if (newEntity) state.data.push(newEntity);
-        state.isLoading = false;
-      });
-    } catch (error) {
-      set(state => { state.error = error as Error });
-    } finally {
-      set(state => { state.isLoading = false });
-    }
+    set(state => ({
+      tasks: [...state.tasks, result.data],
+      isLoading: false
+    }))
   },
 
-  // Additional actions follow same pattern:
-  // 1. Set loading/clear error
-  // 2. Validate input (if mutation)
-  // 3. Call server action
-  // 4. Update state
-  // 5. Handle errors
-  // 6. Clear loading
+  setError: (error) => set({ error })
+}))
 
-  reset: () => set(state => {
-    state.data = [];
-    state.isLoading = false;
-    state.error = null;
-  })
-}));
+// Usage in a component:
+'use client'
+export function TaskList() {
+  const { tasks, create, isLoading, error } = useTaskStore()
+
+  return (
+    <div>
+      {error && <div className="text-red-500">{error}</div>}
+      {isLoading && <div>Creating task...</div>}
+      <button
+        onClick={() => create({ title: 'New Task' })}
+        disabled={isLoading}
+      >
+        Add Task
+      </button>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>{task.title}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 ```
 
-3. Update store composition:
+## Essential Requirements
 
-```typescript:@/store/index.ts
-import { create } from 'zustand'
-import { immer } from 'zustand/middleware/immer'
-import { createSlice } from './<slice-name>/slice.ts'
+- Minimal state (data, loading, error)
+- One primary action that updates state
+- Type safety with Supabase types
+- Loading and error handling
 
-export const useStore = create<EntitySlice>()(
-  immer(createSlice)
-)
-```
+## Common Gotchas
 
-## Common Pitfalls
+- Keep state minimal and flat
+- Handle all loading/error states
+- Use server actions for data mutations
 
-- Not handling loading/error states
-- Missing type safety
-- Unnecessary state updates
-- Complex state derivations
-- Not using devtools
-- Missing persistence
-- Poor error handling
-- Inconsistent naming
+## Optional Enhancements
 
-NOTE: PLEASE CHECK OFF ALL THE CHECKLIST ITEMS BELOW
+When to add:
 
-## Validation Criteria
-
-- [ ] State shape is well-defined
-- [ ] Actions are properly typed
-- [ ] Loading states managed
-- [ ] Error states handled
-- [ ] Persistence configured
-- [ ] Devtools integration
-- [ ] Tests cover mutations
-- [ ] Performance optimized
+- Additional actions: As UI needs grow
+- Computed values: For derived state
+- Persistence: For offline support
+- State slicing: For complex state
+- Middleware: For logging/debugging
