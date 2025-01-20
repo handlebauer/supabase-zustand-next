@@ -168,6 +168,34 @@ try {
         throw error
     }
 
+    // Remove postinstall script and template directory
+    console.log('\n🧹 Cleaning up installation files...')
+    try {
+        // Read and modify package.json
+        const packageJson = JSON.parse(await Bun.file('package.json').text())
+        delete packageJson.scripts.postinstall
+        await Bun.write(
+            'package.json',
+            JSON.stringify(packageJson, null, 2) + '\n',
+        )
+
+        // Remove template directory
+        await rm('.template', { recursive: true, force: true })
+    } catch (error) {
+        console.error('\n❌ Error cleaning up installation files:', error)
+        throw error
+    }
+
+    // Commit all changes
+    console.log('\n📦 Committing changes...')
+    try {
+        await $`git add .`
+        await $`git commit -m "chore: initialize project with supabase, shadcn/ui and environment setup" | cat`
+    } catch (error) {
+        console.error('\n❌ Error committing changes:', error)
+        throw error
+    }
+
     console.log('\n✅ Project setup completed successfully!')
 } catch (error) {
     console.error('\n❌ Final error:', error)
