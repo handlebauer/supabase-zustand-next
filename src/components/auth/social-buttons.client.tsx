@@ -1,29 +1,36 @@
 import { Button } from '@/components/ui/button'
 import { IconBrandGithub, IconBrandDiscord } from '@tabler/icons-react'
 import { signInWithGitHub, signInWithDiscord } from '@/lib/auth'
+import { useState } from 'react'
 
 export interface SocialButtonsProps {
-    loading: boolean
     onStateChange: (loading: boolean) => void
 }
 
-export function SocialButtons({ loading, onStateChange }: SocialButtonsProps) {
+export function SocialButtons({ onStateChange }: SocialButtonsProps) {
+    const [githubLoading, setGithubLoading] = useState(false)
+    const [discordLoading, setDiscordLoading] = useState(false)
+
     async function handleGitHub() {
         try {
+            setGithubLoading(true)
             onStateChange(true)
             await signInWithGitHub()
         } catch (error) {
             console.error('GitHub login error:', error)
+            setGithubLoading(false)
             onStateChange(false)
         }
     }
 
     async function handleDiscord() {
         try {
+            setDiscordLoading(true)
             onStateChange(true)
             await signInWithDiscord()
         } catch (error) {
             console.error('Discord login error:', error)
+            setDiscordLoading(false)
             onStateChange(false)
         }
     }
@@ -42,19 +49,19 @@ export function SocialButtons({ loading, onStateChange }: SocialButtonsProps) {
                     variant="outline"
                     className="w-full"
                     onClick={handleGitHub}
-                    disabled={loading}
+                    disabled={githubLoading || discordLoading}
                 >
                     <IconBrandGithub className="mr-2 h-4 w-4" />
-                    {loading ? '...' : 'GitHub'}
+                    {githubLoading ? '...' : 'GitHub'}
                 </Button>
                 <Button
                     variant="outline"
                     className="w-full"
                     onClick={handleDiscord}
-                    disabled={loading}
+                    disabled={githubLoading || discordLoading}
                 >
                     <IconBrandDiscord className="mr-2 h-4 w-4" />
-                    {loading ? '...' : 'Discord'}
+                    {discordLoading ? '...' : 'Discord'}
                 </Button>
             </div>
         </div>
