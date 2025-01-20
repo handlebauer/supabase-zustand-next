@@ -107,7 +107,8 @@ try {
                     !line.includes('src/lib/utils.ts') &&
                     !line.includes('components.json') &&
                     !line.includes('.template') &&
-                    !line.includes('!.template/install.ts'),
+                    !line.includes('!.template/install.ts') &&
+                    !line.includes('tests/.auth/'),
             )
             .join('\n')
         await Bun.write('.gitignore', cleanedGitignore)
