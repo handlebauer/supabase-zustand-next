@@ -11,10 +11,26 @@ To analyze a feature's implementation needs, consider each question:
     - [ ] No persistence required?
 
 2. What type of data access is needed?
-    - [ ] Read operations
-    - [ ] Write/Update operations
+    - [ ] Read operations (GET)
+    - [ ] Write operations (POST/PUT/PATCH/DELETE)
     - [ ] Real-time updates
     - [ ] Offline capabilities
+
+## Data Fetching Strategy
+
+1. How will data be accessed?
+    - [ ] GET requests in RSCs (preferred)
+        - Static data display
+        - Server-rendered lists
+        - Initial page data
+    - [ ] Route Handlers
+        - Complex GET requests
+        - Custom API endpoints
+        - Third-party API proxying
+    - [ ] Server Actions
+        - Form submissions
+        - Data mutations
+        - Cache invalidation
 
 ## UI/UX Requirements
 
@@ -89,25 +105,32 @@ Based on the requirements above, which layers are needed:
 
 ## Example Analysis
 
-For a "Create Task" feature:
+For a "Task Management" feature:
 
 ```typescript
 // Basic Requirements:
 // - Store tasks in database
-// - Form for creating tasks
-// - Immediate feedback after creation
-// - Loading states during creation
+// - Display task list
+// - Create new tasks
+// - Update task status
+
+// Data Fetching Strategy:
+// - TaskList: RSC with direct database query (GET)
+// - TaskCreate: Server Action (POST)
+// - TaskUpdate: Server Action (PATCH)
+// - TaskSearch: Route Handler (complex GET with params)
 
 // Component Strategy:
-// - TaskList: RSC (static data display)
+// - TaskList: RSC (uses direct DB query or service call)
 // - CreateTaskForm: RCC (needs loading state)
 // - TaskItem: RSC (static display)
 
 // Basic Implementation Layers:
 // 1. Data Model: Task table + schemas
-// 2. Service: Task creation + validation
-// 3. Server Action: Handle form submission
-// 4. UI Components:
+// 2. Service: Task operations + validation
+// 3. Server Components: For data display
+// 4. Server Actions: For mutations
+// 5. UI Components:
 //    - RSC: TaskList, TaskItem
 //    - RCC: CreateTaskForm (minimal client state)
 
