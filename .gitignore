@@ -41,3 +41,4 @@ src/lib/utils.ts
 components.json
 .template
 !.template/install.ts
+tests/.auth/
