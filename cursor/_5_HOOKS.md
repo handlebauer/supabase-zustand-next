@@ -17,10 +17,10 @@ You might skip this layer when:
 ## Quick Start
 
 ```typescript
-// @/hooks/useTasks.ts
+// @/hooks/use-tasks.ts
 import { useCallback } from 'react'
 import { useTaskStore } from '@/store/tasks'
-import { createTask } from '@/lib/actions/tasks'
+import { createTask } from '@/actions/tasks'
 
 export function useTasks() {
   const { tasks, isLoading, error } = useTaskStore()

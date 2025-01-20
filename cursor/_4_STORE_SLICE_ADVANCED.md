@@ -5,8 +5,8 @@
 ```typescript
 // @/store/tasks.ts
 import { create } from 'zustand'
+import { createTask, updateTask } from '@/actions/tasks'
 import { type Tables } from '@/lib/supabase/types'
-import { createTask, updateTask } from '@/lib/actions/tasks'
 import { persist } from 'zustand/middleware'
 
 interface TaskState {

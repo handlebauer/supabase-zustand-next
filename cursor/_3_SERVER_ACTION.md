@@ -4,6 +4,7 @@
 
 You need server actions when:
 
+- You need to perform mutations (POST, PUT, PATCH, DELETE)
 - Handling form submissions in React Server Components
 - Managing client-server data flow without API endpoints
 - Performing mutations that need immediate cache revalidation
@@ -17,12 +18,12 @@ You might skip this layer when:
 ## Quick Start
 
 ```typescript
-// @/lib/actions/tasks.ts
+// @/actions/tasks.ts
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createTaskSchema } from '@/lib/schemas/tasks'
 import { TaskService } from '@/services/tasks'
+import { createTaskSchema } from '@/lib/schemas/tasks'
 import { ActionError } from '@/lib/errors'
 
 const service = new TaskService()

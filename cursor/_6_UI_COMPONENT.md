@@ -10,6 +10,9 @@
 // Check @/app/globals.css for theme variables
 // Check tailwind.config.ts for theme configuration
 
+// React Client Components end with `.client.tsx`
+// React Server Components do not have a specific file extension
+
 // @/components/tasks/task-list.tsx
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
